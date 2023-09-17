@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+require __DIR__.'/passport.php';
 
 Route::get('/', function () {
     return view('welcome');

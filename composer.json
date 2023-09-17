@@ -12,6 +12,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "ndinhbang/eloquent-filters": "dev-develop",
+        "ndinhbang/passport": "dev-develop",
         "ndinhbang/query-cache": "dev-develop",
         "ndinhbang/response-cache": "dev-develop",
         "ndinhbang/support": "dev-develop"
@@ -28,6 +29,10 @@
         {
             "type": "path",
             "url": "../packages/ndinhbang/eloquent-filters"
+        },
+        {
+            "type": "path",
+            "url": "../packages/ndinhbang/passport"
         },
         {
             "type": "path",
