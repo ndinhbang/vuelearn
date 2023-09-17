@@ -18,4 +18,19 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    <IfModule mod_mime.c>
+       # Manifest file
+       AddType application/manifest+json webmanifest
+    </IfModule>
+
+    # Allow Access Control Headers
+    <IfModule mod_headers.c>
+         # Header for service worker file
+        <Files "sw.js">
+            Header always set Service-Worker-Allowed "/"
+            Header Set Cache-Control "max-age=0, public, must-revalidate"
+            Header Set Expires "Thu, 1 Jan 1970 00:00:00 GMT"
+        </Files>
+    </IfModule>
 </IfModule>
