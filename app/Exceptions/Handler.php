@@ -27,4 +27,22 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /**
+     * Report or log an exception.
+     *
+     * @param  \Throwable  $e
+     * @return void
+     *
+     * @throws \Throwable
+     */
+    public function report(Throwable $e)
+    {
+        // Stop logging or reporting if this is an "access denied" (code 9) OAuthServerException.
+        if (($e instanceof \Laravel\Passport\Exceptions\OAuthServerException && $e->getCode() === 9)
+            || ($e instanceof \League\OAuth2\Server\Exception\OAuthServerException && $e->getCode() === 9)) {
+            return;
+        }
+        parent::report($e);
+    }
 }

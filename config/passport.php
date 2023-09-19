@@ -13,8 +13,7 @@ return [
     |
     */
 
-    'guard' => 'web',
-    'path' => 'oauth',
+    'guard' => 'api',
 
     /*
     |--------------------------------------------------------------------------
@@ -58,6 +57,17 @@ return [
     'personal_access_client' => [
         'id' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_ID'),
         'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
+    ],
+
+    'password_grant_client' => [
+        'id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+        'secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+    ],
+
+    'cookie' => [
+        'access_token' => env('PASSPORT_ACCESS_TOKEN_COOKIE', '__Secure-access_token'),
+        'fingerprint' => env('PASSPORT_FINGERPRINT_COOKIE', '__Secure-fp'),
+        'refresh_token' => env('PASSPORT_REFRESH_TOKEN_COOKIE', '__Secure-refresh_token'),
     ],
 
 ];

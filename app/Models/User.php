@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -40,7 +41,33 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
+        'is_active' => 'boolean',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Scope a query to only include popular users.
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('is_active', true);
+    }
+
+    /**
+     * @param $identifier
+     * @return mixed
+     */
+    public function findForPassport($identifier): mixed
+    {
+        return $this->when(
+            is_numeric($identifier),
+            fn ($query) => $query->where('phone', $identifier),
+            fn ($query) => $query->where('email', $identifier),
+        )
+            ->active()
+            ->first();
+    }
+
+
 }

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
-use App\Overridden\Passport\Bridge\AccessToken;
+use App\Src\Passport\Bridge\AccessToken;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Laravel\Passport\Passport;
 use App\Models\Passport\AuthCode;
@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Passport::cookie('v10_TkyzLHZ8Zdku');
+        Passport::cookie(config('passport.cookie.access_token'));
         Passport::hashClientSecrets();
         Passport::tokensExpireIn(now()->addMinutes(15));
         Passport::refreshTokensExpireIn(now()->addDays(30));
