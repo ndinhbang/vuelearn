@@ -22,6 +22,8 @@ class BearerTokenResponse extends BaseBearerTokenResponse
         $cookieDomain = config('session.domain');
         $cookiePath = config('session.path');
         $cookieSameSite = config('session.same_site');
+        $refreshTokenCookieName = config('passport.cookie.refresh_token');
+        $fingerprintCookieName = config('passport.cookie.fingerprint');
 
         $responseParams = [
             'token_type' => 'Bearer',
@@ -29,7 +31,13 @@ class BearerTokenResponse extends BaseBearerTokenResponse
             'access_token' => (string)$this->accessToken,
         ];
 
-        $response = new Response;
+        $content = \json_encode(\array_merge($this->getExtraParams($this->accessToken), $responseParams));
+        if ($content === false) {
+            throw new LogicException('Error encountered JSON encoding response parameters');
+        }
+
+        $response = new Response($content);
+
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
             $refreshTokenExpireTime = $this->refreshToken->getExpiryDateTime()->getTimestamp();
 
@@ -45,25 +53,18 @@ class BearerTokenResponse extends BaseBearerTokenResponse
             if ($refreshTokenPayload === false) {
                 throw new LogicException('Error encountered JSON encoding the refresh token payload');
             }
-            $responseParams['refresh_token'] = $this->encrypt($refreshTokenPayload);
 
             $response->withCookie(
-                new Cookie(config('passport.cookie.refresh_token'), $responseParams['refresh_token'], $refreshTokenExpireTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
+                new Cookie($refreshTokenCookieName, $this->encrypt($refreshTokenPayload), $refreshTokenExpireTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
             );
         }
 
-        $responseParams = \json_encode(\array_merge($this->getExtraParams($this->accessToken), $responseParams));
-
-        if ($responseParams === false) {
-            throw new LogicException('Error encountered JSON encoding response parameters');
-        }
-
-        return $response->setContent($responseParams)
+        return $response
             ->header('pragma', 'no-cache')
             ->header('cache-control', 'no-store, must-revalidate')
             ->header('content-type', 'application/json; charset=UTF-8')
             ->withCookie(
-                new Cookie(config('passport.cookie.fingerprint'), $tokenFingerprint, $expireDateTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
+                new Cookie($fingerprintCookieName, $tokenFingerprint, $expireDateTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
             );
     }
 
