@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix("v1")->name('v1.')->group(function () {
     Route::prefix("auth")->name('auth.')->group(function () {
-        Route::post('login', \App\Http\Controllers\Auth\LoginController::class)->name('login')->middleware(['throttle:5,1']);
+        Route::post('login', \App\Http\Controllers\Auth\LoginController::class)->name('login')->middleware(['throttle:5,5']);
         Route::post('logout', \App\Http\Controllers\Auth\LogoutController::class)->name('logout');
     });
 });
