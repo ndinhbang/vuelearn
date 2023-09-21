@@ -3,9 +3,13 @@
 namespace App\Providers;
 
 use App\Src\Passport\AuthorizationServer;
+use App\Src\Passport\Bridge\BearerTokenValidator;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use League\OAuth2\Server\ResourceServer;
 
 class PassportServiceProvider extends \Laravel\Passport\PassportServiceProvider
 {
@@ -50,13 +54,37 @@ class PassportServiceProvider extends \Laravel\Passport\PassportServiceProvider
                 $server->enableGrantType(
                     new ClientCredentialsGrant, Passport::tokensExpireIn()
                 );
-
-                if (Passport::$implicitGrantEnabled) {
-                    $server->enableGrantType(
-                        $this->makeImplicitGrant(), Passport::tokensExpireIn()
-                    );
-                }
             });
+        });
+    }
+
+    /**
+     * Register the resource server.
+     *
+     * @return void
+     */
+    protected function registerResourceServer()
+    {
+        $this->app->singleton(ResourceServer::class, function ($container) {
+            $accessTokenRepository = $container->make(\Laravel\Passport\Bridge\AccessTokenRepository::class);
+            $publicKey = $this->makeCryptKey('public');
+            $tokenValidator = (new BearerTokenValidator($accessTokenRepository));
+            $tokenValidator->setPublicKey($publicKey);
+            return new ResourceServer($accessTokenRepository, $publicKey, $tokenValidator);
+        });
+    }
+
+    /**
+     * Create and configure a Refresh Token grant instance.
+     *
+     * @return \League\OAuth2\Server\Grant\RefreshTokenGrant
+     */
+    protected function makeRefreshTokenGrant()
+    {
+        $repository = $this->app->make(RefreshTokenRepository::class);
+
+        return tap(new RefreshTokenGrant($repository), function ($grant) {
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
 }

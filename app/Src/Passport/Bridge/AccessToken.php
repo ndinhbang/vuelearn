@@ -2,7 +2,7 @@
 
 namespace App\Src\Passport\Bridge;
 
-use App\Src\Passport\TokenFingerprintTrait;
+use App\Src\Passport\Concerns\TokenFingerprintTrait;
 use DateTimeImmutable;
 use Illuminate\Support\Str;
 use Lcobucci\JWT\Token;
