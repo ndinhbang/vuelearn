@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\RequestLockedException;
 use App\Http\Controllers\Controller;
 use App\Src\Passport\AuthorizationServer;
 use Illuminate\Http\Request;
@@ -68,13 +67,14 @@ class RefreshController extends Controller
         }
 
         try {
+            $clientConfig = config('passport.password_grant_client');
             /**@var \App\Src\Passport\ResponseTypes\BearerTokenResponse $tokenResponse*/
             $tokenResponse = $this->server->getAccessTokenResponse(
                 $this->tokenRequest->withParsedBody([
                     'grant_type' => 'refresh_token',
                     'refresh_token' => $refreshToken,
-                    'client_id' => config('passport.password_grant_client.id'),
-                    'client_secret' => config('passport.password_grant_client.secret'),
+                    'client_id' => $clientConfig['id'],
+                    'client_secret' => $clientConfig['secret'],
                     'scope' => '',
                 ])
             );

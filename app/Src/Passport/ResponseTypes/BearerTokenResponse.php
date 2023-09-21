@@ -18,12 +18,6 @@ class BearerTokenResponse extends BaseBearerTokenResponse
     public function toResponse(): Response
     {
         $expireDateTime = $this->accessToken->getExpiryDateTime()->getTimestamp();
-        $tokenFingerprint = $this->accessToken->getFingerprint();
-        $cookieDomain = config('session.domain');
-        $cookiePath = config('session.path');
-        $cookieSameSite = config('session.same_site');
-        $refreshTokenCookieName = config('passport.cookie.refresh_token');
-        $fingerprintCookieName = config('passport.cookie.fingerprint');
 
         $responseParams = [
             'token_type' => 'Bearer',
@@ -36,6 +30,7 @@ class BearerTokenResponse extends BaseBearerTokenResponse
             throw new LogicException('Error encountered JSON encoding response parameters');
         }
 
+        $cookieConfig = config('session');
         $response = new Response($content);
 
         if ($this->refreshToken instanceof RefreshTokenEntityInterface) {
@@ -55,7 +50,17 @@ class BearerTokenResponse extends BaseBearerTokenResponse
             }
 
             $response->withCookie(
-                new Cookie($refreshTokenCookieName, $this->encrypt($refreshTokenPayload), $refreshTokenExpireTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
+                new Cookie(
+                    config('passport.cookie.refresh_token'),
+                    $this->encrypt($refreshTokenPayload),
+                    $refreshTokenExpireTime,
+                    $cookieConfig['path'],
+                    $cookieConfig['domain'],
+                    $cookieConfig['secure'],
+                    $cookieConfig['http_only'],
+                    false,
+                    $cookieConfig['same_site']
+                )
             );
         }
 
@@ -64,7 +69,17 @@ class BearerTokenResponse extends BaseBearerTokenResponse
             ->header('cache-control', 'no-store, must-revalidate')
             ->header('content-type', 'application/json; charset=UTF-8')
             ->withCookie(
-                new Cookie($fingerprintCookieName, $tokenFingerprint, $expireDateTime, $cookiePath, $cookieDomain, true, true, false, $cookieSameSite)
+                new Cookie(
+                    config('passport.cookie.fingerprint'),
+                    $this->accessToken->getFingerprint(),
+                    $expireDateTime,
+                    $cookieConfig['path'],
+                    $cookieConfig['domain'],
+                    $cookieConfig['secure'],
+                    $cookieConfig['http_only'],
+                    false,
+                    $cookieConfig['same_site']
+                )
             );
     }
 

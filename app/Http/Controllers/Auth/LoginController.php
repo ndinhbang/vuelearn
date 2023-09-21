@@ -65,13 +65,14 @@ class LoginController extends Controller
         }
 
         try {
+            $clientConfig = config('passport.password_grant_client');
             /**@var \App\Src\Passport\ResponseTypes\BearerTokenResponse $tokenResponse*/
             $tokenResponse = $this->server->getAccessTokenResponse(
                 $this->tokenRequest->withParsedBody(
                     array_merge($request->validated(), [
                         'grant_type' => 'password',
-                        'client_id' => config('passport.password_grant_client.id'),
-                        'client_secret' => config('passport.password_grant_client.secret'),
+                        'client_id' => $clientConfig['id'],
+                        'client_secret' => $clientConfig['secret'],
                         'scope' => '*',
                     ]))
             );
@@ -83,5 +84,4 @@ class LoginController extends Controller
             $lock->release();
         }
     }
-
 }

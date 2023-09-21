@@ -16,9 +16,10 @@ class LogoutController extends Controller
         $token->revoke();
         $token->refreshToken->revoke();
 
+        $cookieConfig = config('passport.cookie');
         return response()
             ->noContent()
-            ->withoutCookie(config('passport.cookie.fingerprint'))
-            ->withoutCookie(config('passport.cookie.refresh_token'));
+            ->withoutCookie($cookieConfig['fingerprint'])
+            ->withoutCookie($cookieConfig['refresh_token']);
     }
 }
