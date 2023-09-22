@@ -8,4 +8,9 @@ use Laravel\Passport\Token as PassportToken;
 class Token extends PassportToken
 {
     use HasFactory;
+
+    public function refreshToken(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(RefreshToken::class, 'access_token_id');
+    }
 }
