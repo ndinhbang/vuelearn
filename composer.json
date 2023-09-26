@@ -17,28 +17,6 @@
         "ndinhbang/response-cache": "dev-develop",
         "ndinhbang/support": "dev-develop"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../packages/ndinhbang/query-cache"
-        },
-        {
-            "type": "path",
-            "url": "../packages/ndinhbang/response-cache"
-        },
-        {
-            "type": "path",
-            "url": "../packages/ndinhbang/eloquent-filters"
-        },
-        {
-            "type": "path",
-            "url": "../packages/ndinhbang/passport"
-        },
-        {
-            "type": "path",
-            "url": "../packages/ndinhbang/support"
-        }
-    ],
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
