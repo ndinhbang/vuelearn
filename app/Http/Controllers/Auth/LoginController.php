@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Src\Passport\AuthorizationServer;
+use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\ConvertsPsrResponses;
